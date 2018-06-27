@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Bookmarker</title>
+	<style type="text/css">
+		.bookmark{
+			max-width: 400px;
+			background: linear-gradient(green,blue, green);
+			padding: 50px;
+			text-align: center;
+			
+		}
+		.bookmark__input{
+			display: block;
+		    min-width: 400px;
+		    background: none;
+		    border: none;
+		    border-bottom: 1px solid white;
+		    outline: none;
+		    margin-top:35px;
+		    color: white;
+		}
+		.bookmark__title{
+			text-align: center;
+		}
+		.bookmark__input-wrap{
+			color: white;
+		}
+		.bookmark__input-button{
+			margin-top: 35px;
+		    background: yellow;
+		    height: 29px;
+		    border-radius: 8px;
+		}
+		.bookmark--bg{
+			max-width: 480px;
+			background: rgba(164,179,87,1);
+			background: -moz-linear-gradient(top, rgba(164,179,87,1) 0%, rgba(117,137,12,0.58) 100%);
+			background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(164,179,87,1)), color-stop(100%, rgba(117,137,12,0.58)));
+			background: -webkit-linear-gradient(top, rgba(164,179,87,1) 0%, rgba(117,137,12,0.58) 100%);
+			background: -o-linear-gradient(top, rgba(164,179,87,1) 0%, rgba(117,137,12,0.58) 100%);
+			background: -ms-linear-gradient(top, rgba(164,179,87,1) 0%, rgba(117,137,12,0.58) 100%);
+			background: linear-gradient(to bottom, rgba(164,179,87,1) 0%, rgba(117,137,12,0.58) 100%);
+			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a4b357', endColorstr='#75890c', GradientType=0 );
+			padding: 10px;
+			margin-top: 10px; 
+		}
+		.bookmark--visit{
+			background: indianred;
+		    border: 1px solid black;
+		    border-radius: 5px;
+		    padding: 2px 6px 2px 6px;
+		    margin: 7px;
+		    text-decoration: none;
+		}
+		.bookmark--delete{
+			background: orange;
+		    border: 1px solid black;
+		    border-radius: 5px;
+		    padding: 2px 6px 2px 6px;
+		    margin: 7px;
+		    text-decoration: none;
+		}
+	</style>
+	
+</head>
+<body onload="fetchBookmarks()">
+	<form class="bookmark" id="bookmark">
+		<h1 class="bookmark__title">Add Bookmarks</h1>
+		<p class="bookmark__input-wrap">Site Name:<input type="text" id="bookmark__name" class="bookmark__input"></p>
+		<p class="bookmark__input-wrap">Site URL:<input type="text" id="bookmark__url" class="bookmark__input"></p>
+		<button type="submit" class="bookmark__input-button">Submit</button>
+	</form>
+	<div id="bookmark__results"></div>
+	<script>
+		document.getElementById('bookmark').addEventListener('submit', saveBookmark);
+		function saveBookmark(e) 
+		{
+			//prevent form from submitting default data
+			e.preventDefault();
+			var sitename = document.querySelector('#bookmark__name').value;
+			var siteurl = document.querySelector('#bookmark__url').value;
+			var bookmark = {
+				name:sitename,
+				URL:siteurl
+			}
+
+			if(!validateForm(sitename,siteurl)){
+				return false;
+			}
+
+			if(localStorage.getItem('bookmarks') === null){
+				var bookmarks = [];
+				bookmarks.push(bookmark);
+				localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+			}
+			else{
+				//get bookmarks from local storage
+				var bookmarks = JSON.parse(localStorage.getItem('bookmarks'));
+				bookmarks.push(bookmark);
+				localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+			}
+			document.getElementById('bookmark').reset();
+			fetchBookmarks();
+		}
+		function deleteBookmark(url){
+			
+			var bookmarks = JSON.parse(localStorage.getItem('bookmarks'));
+			for(i=0;i<bookmarks.length;i++){
+				if(bookmarks[i].URL == url){
+					//remove from array
+					bookmarks.splice(i,1);
+				}
+				
+			}
+			localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+			fetchBookmarks();
+		}
+		function fetchBookmarks(){
+			var bookmarks = JSON.parse(localStorage.getItem('bookmarks'));
+			var bookmarkResults = document.querySelector('#bookmark__results');
+			bookmarkResults.innerHTML = '';
+			for(var i=0;i<bookmarks.length;i++){
+				var name = bookmarks[i].name;
+				var url = bookmarks[i].URL;
+				bookmarkResults.innerHTML += '<div class="bookmark--bg"><h3>'+name+
+				'<a class="bookmark--visit" href="'+url+'" target="_blank">Visit</a>'+
+				'<a class="bookmark--delete" href="#" onclick="deleteBookmark(\''+url+'\')">Delete</a>'
+				'</h3></div>';
+			}
+		}
+		function validateForm(sitename,siteurl){
+			if(!sitename || !siteurl){
+				alert('please fill the form');
+				return false;
+			}
+			var expression = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
+			var regex = new RegExp(expression);
+			if(!siteurl.match(regex)){
+				alert('please use the valid format');
+				return false;
+			}
+			return true;
+		}
+	</script>
+</body>
+</html>
