@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>to do list</title>
+	<style type="text/css">
+		.todolist__body{
+			background: url('img1.jpg');
+			text-align: center;
+		}
+		.todolist__body{
+			background: url('img1.jpg');
+		}
+		.todolist--center{
+			margin:0 auto;
+		}
+		#todolist__button{
+			border: 1px solid black;
+		    border-radius: 0px 5px 5px 0px;
+		    padding: 5px;
+		    background: darkseagreen;
+		}
+		#todolist__input{
+			border: 1px solid black;
+		    border-radius: 5px 0px 0px 5px;
+		    padding: 5px;
+		}
+		.todolist__span{
+			position: relative;
+    		right: 4px;
+		}
+		.todolist__body{
+			color: white;
+		}
+		.todolist__items{
+			padding-left: 0px;
+		}
+		.todolist__item{
+			list-style: none;
+			text-align: left;
+			border-bottom: 1px solid white;
+			width: 80%;
+			margin:auto;
+			margin-top: 10px;
+		}
+		.todolist__result{
+			margin: auto;
+    		width: 50%;
+		}
+		.todolist__checkbox{
+			float: right;
+		}
+	</style>
+</head>
+<body class="todolist__body">
+	<div class="todolist">
+		<div class="todolist-wrap todolist--center">
+			<div class="todolist__text-wrap">
+				<h1 class="todolist__heading">TodoList</h1>
+				<p class="todolist__subhead">Welcome to my Todo list applications</p>
+			</div>
+			<div class="todolist__form-container">
+				<form id="form">
+					<div id="todolist__input-group">
+						<input type="text" id="todolist__input" placeholder="Enter your Todo List">
+						<span class="todolist__span">
+							<button type="submit" id="todolist__button">Submit</button>
+						</span>	
+					</div>					
+				</form>				
+			</div>	
+		</div>
+		<div class="todolist__result">
+			<ul id="todolist__items"></ul>
+		</div>
+	</div>
+	<script type="text/javascript">
+		window.onload = function(){
+			var form = document.getElementById('form');
+			var input = document.getElementById('todolist__input');
+			var btn = document.getElementById('todolist__button');
+			var list = document.getElementById('todolist__items')
+			var id=1;
+			btn.addEventListener('click',addTodoItem);
+			list.addEventListener('click',checkboxChecked);
+			function addTodoItem(e){
+				e.preventDefault();
+				if(input.value == ''){
+					alert('Please fill the form');
+				}
+				else{
+					if(list.style.borderTop == ''){
+						list.style.borderTop = '1px solid white';
+						list.style.padding='0px';
+					}
+					var item = '<li class="todolist__item">'+input.value+'<input type="checkbox" class="todolist__checkbox">'+'</li>'+'<br>';
+					list.insertAdjacentHTML('beforeend', item);
+				}
+				form.reset();
+			}
+			function checkboxChecked(event){
+				checkboxElement= event.target;				
+				if(checkboxElement.checked == true){
+					checkboxElement.parentNode.style.textDecoration='line-through';
+					checkboxElement.disabled = true;
+				}
+			}
+		}
+	</script>
+</body>
+</html>
